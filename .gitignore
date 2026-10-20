@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+coverage/
+*.log
+.DS_Store
+public/vendor/ort/*
+!public/vendor/ort/.gitkeep
+public/vendor/phonemize/*
+!public/vendor/phonemize/.gitkeep
+
+tsconfig.tsbuildinfo
