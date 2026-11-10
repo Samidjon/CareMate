@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import type { ErrorKey, FormState } from "@/lib/account/validation";
 import { isWithinRateLimit } from "@/lib/security/rate-limit";
+import { identifyCode, wrongPlaceError } from "./code-kind";
 import { createClient, getUser } from "@/lib/supabase/server";
 import { permissionFields, permissionsFromForm } from "./permissions";
 
@@ -43,7 +44,7 @@ export async function reviewRequestAction(_previous: ReviewState, formData: Form
     const { data, error } = await current.supabase.rpc("preview_caregiver_request", { code });
     if (error) return fail(error.code === "PGRST202" ? "notConfigured" : "generic");
     const row = data?.[0];
-    if (!row) return { status: "error", fieldErrors: { code: "invalidCode" } };
+    if (!row) return { status: "error", fieldErrors: { code: wrongPlaceError(await identifyCode(code, current.user.id), "request") } };
     return { status: "idle", code, requester: `${row.first_name} ${row.last_name}`.trim() };
   }
 
@@ -54,7 +55,7 @@ export async function reviewRequestAction(_previous: ReviewState, formData: Form
     ...Object.fromEntries(permissionFields.map((field) => [field.argument, shared[field.key]])),
   });
   if (error) {
-    if (error.code === "P0002") return { status: "error", fieldErrors: { code: "invalidCode" } };
+    if (error.code === "P0002") return { status: "error", fieldErrors: { code: wrongPlaceError(await identifyCode(code, current.user.id), "request") } };
     if (error.code === "P0001") return fail("ownInvite");
     console.error("Care request decision failed:", error.code);
     return fail("generic");

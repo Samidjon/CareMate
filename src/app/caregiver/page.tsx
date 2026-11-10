@@ -14,7 +14,12 @@ export default async function CaregiverPage() {
   const session = await requireSession("/caregiver");
   if (!session) return <AccountsNotConfigured t={t} title={g.title} />;
 
-  const { people, failed } = await getCareRecipients(session.supabase);
+  const [{ people, failed }, { data: profile }] = await Promise.all([
+    getCareRecipients(session.supabase),
+    session.supabase.from("profiles").select("role").eq("id", session.user.id).maybeSingle(),
+  ]);
+  // A patient who lands here usually wants to connect a helper, which starts in their own area.
+  const isPatient = profile?.role === "patient";
   const { events } = await getRecentEmergencies(
     session.supabase,
     people.filter((person) => person.can_receive_sos).map((person) => person.patient_id),
@@ -27,7 +32,15 @@ export default async function CaregiverPage() {
       <BrandLogo alt={t.header.logoAlt} size={72} />
       <h1>{g.title}</h1>
       {failed && <p className="notice notice-error">{t.errors.generic}</p>}
-      {!failed && people.length === 0 && <p className="notice">{g.empty}</p>}
+      {isPatient && (
+        <div className="notice notice-info flex-col items-start" data-testid="patient-hint">
+          <p>{g.patientHint}</p>
+          <Link href="/circle#invites-title" className="btn btn-primary">
+            {g.patientHintLink}
+          </Link>
+        </div>
+      )}
+      {!failed && people.length === 0 && !isPatient && <p className="notice">{g.empty}</p>}
 
       <ul className="flex flex-col gap-3">
         {people.map((person) => (
@@ -56,7 +69,16 @@ export default async function CaregiverPage() {
       <Link href="/caregiver/accept" className={people.length === 0 ? "btn btn-primary" : "btn btn-secondary"}>
         <TicketCheck aria-hidden size={24} /> {g.acceptLink}
       </Link>
-      <RequestCodeForm />
+      {isPatient ? (
+        <details className="card">
+          <summary className="cursor-pointer font-bold">{g.helpSomeoneElse}</summary>
+          <div className="mt-3">
+            <RequestCodeForm />
+          </div>
+        </details>
+      ) : (
+        <RequestCodeForm />
+      )}
     </div>
   );
 }

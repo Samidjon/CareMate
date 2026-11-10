@@ -6,7 +6,10 @@
 import { createServer } from "node:http";
 
 export const MOCK_ANTHROPIC_KEY = "mock-anthropic-key-for-tests-only";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
+
+// As public.invitation_code_hash(): the server looks codes up by this hash.
+const hashCode = (code) => createHash("sha256").update(String(code).trim().toUpperCase(), "utf8").digest("hex");
 
 const users = new Map();
 const rateCounters = new Map();
@@ -159,6 +162,7 @@ function rpc(name, body, caller, send) {
       id: randomUUID(),
       patient_id: caller.id,
       code,
+      code_hash: hashCode(code),
       status: "pending",
       expires_at: new Date(Date.now() + 7 * 86400_000).toISOString(),
       ...fromArguments(body),
@@ -204,7 +208,7 @@ function rpc(name, body, caller, send) {
   }
   if (name === "create_caregiver_request") {
     const code = randomUUID().replace(/-/g, "").slice(0, 10).toUpperCase();
-    tables.caregiver_requests.push({ id: randomUUID(), caregiver_id: caller.id, code, status: "pending" });
+    tables.caregiver_requests.push({ id: randomUUID(), caregiver_id: caller.id, code, code_hash: hashCode(code), status: "pending", expires_at: new Date(Date.now() + 7 * 86400_000).toISOString() });
     return send(200, code);
   }
   const careRequest = () =>
@@ -300,6 +304,7 @@ function matches(row, url) {
     const actual = row[column];
     if (op === "eq" && String(actual) !== expected) return false;
     if (op === "gte" && !(new Date(actual) >= new Date(expected))) return false;
+    if (op === "gt" && !(new Date(actual) > new Date(expected))) return false;
     if (op === "in" && !expected.replace(/[()"]/g, "").split(",").includes(String(actual))) return false;
   }
   return true;

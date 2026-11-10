@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { ErrorKey, FormState } from "@/lib/account/validation";
 import { isWithinRateLimit } from "@/lib/security/rate-limit";
+import { identifyCode, wrongPlaceError } from "./code-kind";
 import { createClient, getUser } from "@/lib/supabase/server";
 import { permissionFields, permissionsFromForm, type Permissions } from "./permissions";
 
@@ -88,7 +89,7 @@ export async function previewInvitationAction(_previous: PreviewState, formData:
     return fail("generic");
   }
   const row = data?.[0];
-  if (!row) return { status: "error", fieldErrors: { code: "invalidCode" } };
+  if (!row) return { status: "error", fieldErrors: { code: wrongPlaceError(await identifyCode(code, current.user.id), "invitation") } };
   return { status: "success", code, inviter: row.first_name, permissions: row };
 }
 
@@ -99,7 +100,7 @@ export async function acceptInvitationAction(_previous: FormState, formData: For
   const { error } = await current.supabase.rpc("accept_caregiver_invitation", { code: String(formData.get("code") ?? "") });
   if (error) {
     if (error.code === "P0001") return fail("ownInvite");
-    if (error.code === "P0002") return fail("invalidCode");
+    if (error.code === "P0002") return fail(wrongPlaceError(await identifyCode(String(formData.get("code") ?? ""), current.user.id), "invitation"));
     console.error("Invitation accept failed:", error.code);
     return fail("generic");
   }
