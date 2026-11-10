@@ -1,0 +1,26 @@
+﻿node_modules/
+.next/
+out/
+coverage/
+*.log
+.DS_Store
+public/vendor/ort/*
+!public/vendor/ort/.gitkeep
+public/vendor/phonemize/*
+!public/vendor/phonemize/.gitkeep
+
+tsconfig.tsbuildinfo
+next-env.d.ts
+
+# Secrets: never commit real environment files
+.env
+.env.*
+!.env.example
+
+# Test output
+test-results/
+playwright-report/
+
+# Supabase local state
+supabase/.temp/
+supabase/.branches/

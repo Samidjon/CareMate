@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+:root {
+  --page: #f4f8f6;
+  --surface: #ffffff;
+  --text: #203936;
+  --muted: #566a66;
+  --border: #dce9e4;
+  --border-strong: #7f9a93;
+  --green: #087e70;
+  --green-dark: #056458;
+  --green-pale: #e8f6f1;
+  --red: #b9282b;
+  --red-dark: #981e22;
+  --red-pale: #fff0ef;
+  --amber-pale: #fff6e0;
+  --amber-text: #6b4608;
+  --focus: #175fbe;
+}
+
+/* All sizes are in rem, so these three values scale the whole interface. */
+html { font-size: 112.5%; }
+html[data-text-size="large"] { font-size: 125%; }
+html[data-text-size="xl"] { font-size: 143.75%; }
+
+html[data-contrast="high"] {
+  --page: #ffffff;
+  --surface: #ffffff;
+  --text: #000000;
+  --muted: #1c2b28;
+  --border: #33423f;
+  --border-strong: #000000;
+  --green: #00594e;
+  --green-dark: #00443b;
+  --green-pale: #e2f3ed;
+  --red: #a00d13;
+  --red-dark: #76090e;
+  --red-pale: #ffffff;
+  --amber-pale: #ffffff;
+  --amber-text: #000000;
+  --focus: #0037a5;
+}
+
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  scroll-behavior: auto !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Simplified interface hides secondary explanations, never actions. */
+html[data-simplified="on"] .secondary-text { display: none; }
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-brand: var(--green);
+  --color-brand-dark: var(--green-dark);
+  --color-brand-pale: var(--green-pale);
+  --color-sos: var(--red);
+  --color-sos-dark: var(--red-dark);
+  --color-sos-pale: var(--red-pale);
+  --color-amber-pale: var(--amber-pale);
+  --color-amber-ink: var(--amber-text);
+  --font-sans: var(--font-manrope), Arial, sans-serif;
+}
+
+@layer base {
+  html { min-height: 100%; }
+  body {
+    min-height: 100vh;
+    background: var(--page);
+    color: var(--text);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-weight: 800; line-height: 1.25; }
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.4rem; }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 4px solid var(--focus);
+    outline-offset: 3px;
+  }
+  button { cursor: pointer; }
+}
+
+@layer components {
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    min-height: 60px;
+    padding: 0.6rem 1rem;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    font-weight: 800;
+    text-align: center;
+  }
+  .btn:disabled { cursor: not-allowed; opacity: 0.65; }
+  .btn-primary { background: var(--green); color: #fff; }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-secondary { background: var(--surface); border-color: var(--border-strong); color: var(--text); }
+  .btn-secondary:hover { background: var(--green-pale); }
+  .btn-sos { background: var(--red); color: #fff; }
+  .btn-sos:hover { background: var(--red-dark); }
+  .btn-danger { background: var(--surface); border-color: var(--red); color: var(--red); }
+  .btn-danger:hover { background: var(--red-pale); }
+
+  .card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 18px;
+    padding: 1rem;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 0.3rem; }
+  .field label, .field legend { font-weight: 700; }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    min-height: 56px;
+    padding: 0.5rem 0.8rem;
+    border: 2px solid var(--border-strong);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--text);
+  }
+  .field textarea { min-height: 7rem; }
+  .field input[aria-invalid="true"] { border-color: var(--red); }
+  .field-error { color: var(--red); font-weight: 700; }
+  .field-hint { color: var(--muted); font-size: 0.9rem; }
+
+  .notice {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.8rem;
+    border: 2px solid var(--border-strong);
+    border-radius: 12px;
+    background: var(--surface);
+  }
+  .notice-info { background: var(--green-pale); border-color: var(--green); }
+  .notice-warn { background: var(--amber-pale); border-color: var(--amber-text); color: var(--amber-text); }
+  .notice-error { background: var(--red-pale); border-color: var(--red); color: var(--red-dark); }
+}
+
+/* Larger map zoom buttons: Leaflet's default 30 px is too small to tap reliably.
+   Leaflet's stylesheet loads with the map, after this one, so these must win outright. */
+.leaflet-control-zoom a.leaflet-control-zoom-in,
+.leaflet-control-zoom a.leaflet-control-zoom-out {
+  width: 48px !important;
+  height: 48px !important;
+  line-height: 46px !important;
+  font-size: 28px !important;
+}
+.leaflet-control-attribution { font-size: 12px; }

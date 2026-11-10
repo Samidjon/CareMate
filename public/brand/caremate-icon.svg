@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t">
+  <title id="t">CareMate</title>
+  <defs>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b8f86"/>
+      <stop offset="1" stop-color="#1f9e74"/>
+    </linearGradient>
+    <linearGradient id="hand" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0a7f78"/>
+      <stop offset="1" stop-color="#14998a"/>
+    </linearGradient>
+  </defs>
+  <!-- Heart outline: care -->
+  <path d="M256 446C146 372 58 288 58 182c0-64 49-114 110-114 39 0 70 20 88 52 18-32 49-52 88-52 61 0 110 50 110 114 0 106-88 190-198 264Z"
+        fill="none" stroke="url(#ring)" stroke-width="34" stroke-linejoin="round"/>
+  <!-- Medical cross -->
+  <circle cx="370" cy="150" r="56" fill="#22a37a"/>
+  <path d="M358 112h24v26h26v24h-26v26h-24v-26h-26v-24h26z" fill="#fff"/>
+  <!-- Older person with a cane -->
+  <circle cx="200" cy="196" r="31" fill="#0d6e67"/>
+  <path d="M158 258c0-17 14-30 31-30h24c17 0 28 10 34 24l18 40-22 12-14-28v118h-71Z" fill="#0d6e67"/>
+  <path d="M172 300v-6a13 13 0 0 1 26 0" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+  <path d="M185 300v104" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+  <!-- Helper -->
+  <circle cx="306" cy="210" r="29" fill="#6cb46a"/>
+  <path d="M256 290l18-34c6-12 18-20 32-20h4c22 0 38 18 38 40v104h-74v-62l-4 4Z" fill="#6cb46a"/>
+  <!-- Supporting hand -->
+  <path d="M142 420c52-48 112-74 190-76 22 0 36 8 34 20-2 11-18 16-40 18l-62 6c36 2 70-2 106-18-30 44-92 74-158 70-28-2-52-8-70-20Z" fill="url(#hand)"/>
+</svg>

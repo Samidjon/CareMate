@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 660" role="img" aria-labelledby="t">
+  <title id="t">CareMate</title>
+  <image href="caremate-icon-on-dark.svg" x="0" y="0" width="512" height="512"/>
+  <text x="256" y="590" text-anchor="middle" font-family="Manrope, 'Arial Rounded MT Bold', Arial, sans-serif"
+        font-size="108" font-weight="800" letter-spacing="-2" fill="#ffffff">CareMate</text>
+  <path d="M112 632c90-30 200-34 296-12" fill="none" stroke="#6cb46a" stroke-width="10" stroke-linecap="round"/>
+</svg>
