@@ -7,14 +7,11 @@ import { InviteForm, PermissionsForm } from "@/components/caregiver-forms";
 import { requireSession } from "@/lib/account/guard";
 import { removeContactAction } from "@/lib/care/actions";
 import { revokeInvitationAction, revokeLinkAction } from "@/lib/caregiver/actions";
+import { appUrl } from "@/lib/app-url";
 import type { Permissions } from "@/lib/caregiver/permissions";
 import { getLocale, getMessages } from "@/lib/i18n/server";
 
 type LinkRow = Permissions & { id: string; caregiver_id: string };
-
-function appUrl() {
-  return (process.env["NEXT_PUBLIC_APP_URL"] || "http://localhost:3000").replace(/\/$/, "");
-}
 
 export default async function CirclePage() {
   const t = await getMessages();
@@ -84,7 +81,7 @@ export default async function CirclePage() {
 
       <section aria-labelledby="invites-title" className="flex flex-col gap-3">
         <h2 id="invites-title">{c.invitesTitle}</h2>
-        <InviteForm appUrl={appUrl()} />
+        <InviteForm appUrl={await appUrl()} />
         <p className="text-[0.9rem] text-muted">{c.emailInvite}</p>
         {(invitations.data?.length ?? 0) > 0 && (
           <>

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { persistLocaleCookie } from "@/lib/i18n/actions";
 import { LOCATION_COOKIE } from "@/lib/location/cookie";
@@ -11,6 +11,7 @@ import { getLocale } from "@/lib/i18n/server";
 import { isWithinRateLimit } from "@/lib/security/rate-limit";
 import { parseSettings, SETTINGS_COOKIE, type Settings } from "@/lib/settings/schema";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { appUrl } from "@/lib/app-url";
 import { createClient, getUser } from "@/lib/supabase/server";
 import {
   forgotSchema,
@@ -27,13 +28,6 @@ import {
 const fail = (error: ErrorKey): FormState => ({ status: "error", error });
 
 const value = (formData: FormData, name: string) => String(formData.get(name) ?? "");
-
-async function appUrl() {
-  const configured = process.env["NEXT_PUBLIC_APP_URL"];
-  if (configured) return configured.replace(/\/$/, "");
-  const list = await headers();
-  return `${list.get("x-forwarded-proto") ?? "http"}://${list.get("host")}`;
-}
 
 /** Brings the settings saved in the account onto this device after signing in. */
 async function applyAccountPreferences() {

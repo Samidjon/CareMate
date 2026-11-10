@@ -174,10 +174,18 @@ Neither replaces trying the app against your own Supabase project.
 
 ## Deploying to Vercel
 
+Without its settings the site still opens, but accounts, the map, medicines, helpers, SOS events and the assistant all say "not configured".
+
 1. Push the repository to GitHub and import it in Vercel.
-2. In **Settings → Environment Variables**, add the Supabase values, `NEXT_PUBLIC_APP_URL` (your Vercel address) and any optional ones you use.
-3. In Supabase, change **Site URL** and add `https://your-app.vercel.app/auth/callback` to **Redirect URLs**.
-4. Deploy, then open the app and run `npm run check:supabase` locally against the same project.
+2. In **Settings → Environment Variables**, add these for **Production** (and Preview if you use it). Paste values without quotes:
+   - `NEXT_PUBLIC_SUPABASE_URL`: the project address, such as `https://abcd.supabase.co`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: the **Publishable** (anon) key
+   - `SUPABASE_SERVICE_ROLE_KEY`: the **Secret** (service role) key, marked Sensitive
+   - `NEXT_PUBLIC_APP_URL`: the site address, such as `https://care-mate-tau.vercel.app`
+   - Optional: `ANTHROPIC_API_KEY`, `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION`
+3. In Supabase, under **Authentication → URL Configuration**, set **Site URL** to the site address and add `<site address>/auth/callback` to **Redirect URLs**.
+4. Redeploy (**Deployments → ⋯ → Redeploy**): settings only reach a deployment made after they were saved.
+5. Open `<site address>/api/health`. It shows, as yes or no, which settings the server sees, whether Supabase answers and whether the database tables exist. It never shows a value.
 
 The voice model (63 MB) is served as a static file. Watch Vercel's bandwidth on the free plan if many people use the Russian voice.
 

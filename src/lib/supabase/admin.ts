@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "@supabase/supabase-js";
+import { setting } from "@/lib/env";
 import { getSupabaseConfig } from "./config";
 
 /**
@@ -8,7 +9,7 @@ import { getSupabaseConfig } from "./config";
  */
 export function createAdminClient() {
   const config = getSupabaseConfig();
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const serviceKey = setting("SUPABASE_SERVICE_ROLE_KEY");
   if (!config || !serviceKey) return null;
   return createClient(config.url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },

@@ -1,3 +1,4 @@
+import { setting } from "@/lib/env";
 // Microsoft Azure AI Speech, used for Uzbek: uz-UZ-MadinaNeural is a calm female
 // voice in Uzbek Latin. Pure functions with an injectable fetch, so they can be
 // tested; the API key only ever lives on the server.
@@ -6,11 +7,11 @@ export type AzureConfig = { key: string; region: string; voice: string; endpoint
 
 /** Null unless both the key and the region are set. */
 export function azureConfig(env: Record<string, string | undefined> = process.env): AzureConfig | null {
-  const key = env.AZURE_SPEECH_KEY?.trim();
-  const region = env.AZURE_SPEECH_REGION?.trim();
+  const key = setting("AZURE_SPEECH_KEY", env);
+  const region = setting("AZURE_SPEECH_REGION", env);
   if (!key || !region || !/^[a-z0-9]+$/.test(region)) return null;
-  const voice = env.AZURE_SPEECH_VOICE?.trim() || "uz-UZ-MadinaNeural";
-  const endpoint = env.AZURE_SPEECH_ENDPOINT?.trim() || `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`;
+  const voice = setting("AZURE_SPEECH_VOICE", env) || "uz-UZ-MadinaNeural";
+  const endpoint = setting("AZURE_SPEECH_ENDPOINT", env) || `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`;
   return { key, region, voice, endpoint };
 }
 

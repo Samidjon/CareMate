@@ -1,15 +1,17 @@
-// A computed name, because the compiler replaces process.env.NEXT_PUBLIC_X, and even
-// process.env["NEXT_PUBLIC_X"], with its value at build time. These settings are read
-// when the server runs, so changing them needs a restart rather than a rebuild.
-function runtimeEnv(name: string) {
-  return process.env[name];
-}
+import { setting } from "@/lib/env";
 
-export function getSupabaseConfig() {
-  const url = runtimeEnv("NEXT_PUBLIC_SUPABASE_URL");
-  const anonKey = runtimeEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY");
-  // A placeholder left in the settings counts as "not configured", not as an address.
-  return url && /^https?:\/\//.test(url) && anonKey ? { url, anonKey } : null;
+/**
+ * The project address and public key, read when the server runs, so changing them
+ * needs a redeploy or restart rather than a rebuild. A placeholder counts as "not
+ * configured", not as an address. A pasted API address (ending in /rest/v1) or a
+ * trailing slash is reduced to the project address.
+ */
+export function getSupabaseConfig(env: Record<string, string | undefined> = process.env) {
+  const rawUrl = setting("NEXT_PUBLIC_SUPABASE_URL", env);
+  const anonKey = setting("NEXT_PUBLIC_SUPABASE_ANON_KEY", env);
+  if (!rawUrl || !/^https?:\/\//.test(rawUrl) || !anonKey) return null;
+  const url = rawUrl.replace(/\/+$/, "").replace(/\/(rest|auth)\/v1$/, "");
+  return { url, anonKey };
 }
 
 export function isSupabaseConfigured() {
