@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { setting } from "@/lib/env";
+import { keyProblem, setting } from "@/lib/env";
 import { getSupabaseConfig } from "@/lib/supabase/config";
 import { assistantModelConfig } from "@/lib/ai/config";
 
@@ -26,5 +26,16 @@ describe("settings pasted into a hosting dashboard", () => {
 
   it("reads a quoted AI key", () => {
     expect(assistantModelConfig({ ANTHROPIC_API_KEY: `"${"x".repeat(40)}"` })?.apiKey).toBe("x".repeat(40));
+  });
+});
+
+describe("pasted key problems", () => {
+  it("names the mistake without repeating the key", () => {
+    const good = "sb_publishable_" + "a".repeat(30);
+    expect(keyProblem(good)).toBeNull();
+    expect(keyProblem(undefined)).toBe("missing");
+    expect(keyProblem("sb_secret_abcd••••••••")).toMatch(/masked/);
+    expect(keyProblem(`NEXT_PUBLIC_SUPABASE_ANON_KEY=${good}`)).toMatch(/variable name/);
+    expect(keyProblem(good.replace("a", "а"))).toMatch(/non-Latin/);
   });
 });

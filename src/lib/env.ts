@@ -10,3 +10,14 @@ export function setting(name: string, env: Record<string, string | undefined> = 
   const value = raw.trim().replace(/^(['"])([\s\S]*)\1$/, "$2").trim();
   return value === "" ? undefined : value;
 }
+
+/** What is wrong with a pasted key, without ever saying what the key is. */
+export function keyProblem(value: string | undefined): string | null {
+  if (!value) return "missing";
+  // A masked copy from a dashboard ("sb_secret_abc••••") or a letter from another
+  // alphabet cannot be sent in a request header at all.
+  if (/[•…·]/.test(value)) return "looks masked: copy the full key with the copy button, not the text shown";
+  if (/^[A-Z_]+=/.test(value)) return "includes the variable name: paste only the part after =";
+  if (/[^!-~]/.test(value)) return "contains spaces or non-Latin characters: paste the key again";
+  return null;
+}

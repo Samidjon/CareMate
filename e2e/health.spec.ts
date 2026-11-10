@@ -4,7 +4,8 @@ test("the status page says what the server sees, without any values", async ({ r
   const connected = await request.get("http://localhost:3100/api/health");
   expect(connected.status()).toBe(200);
   const body = await connected.json();
-  expect(body.supabase).toMatchObject({ url: true, anonKey: true, configured: true, serviceRoleKey: true, reachable: true, databaseReady: true });
+  expect(body.supabase).toMatchObject({ url: true, anonKey: true, configured: true, serviceRoleKey: true, reachable: true, databaseReady: true, serviceRoleKeyAccepted: true });
+  expect(body.problems).toEqual({});
   expect(body.assistantAi).toBe(true);
   const text = JSON.stringify(body);
   for (const secret of ["mock-anon-key", "mock-service-key", "mock-anthropic-key", "localhost:54399"]) expect(text).not.toContain(secret);

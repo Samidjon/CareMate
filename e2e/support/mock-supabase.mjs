@@ -473,6 +473,10 @@ function handle(req, res, url, body) {
   if (path === "/auth/v1/recover" && req.method === "POST") return send(200, {});
   if (path === "/auth/v1/logout" && req.method === "POST") return send(204);
 
+  if (path === "/auth/v1/admin/users" && req.method === "GET") {
+    if (req.headers.authorization !== "Bearer mock-service-key") return send(403, { msg: "forbidden" });
+    return send(200, { users: [], aud: "authenticated" });
+  }
   if (path.startsWith("/auth/v1/admin/users/")) {
     if (req.headers.authorization !== "Bearer mock-service-key") return send(403, { msg: "forbidden" });
     const id = path.split("/").pop();
