@@ -24,3 +24,6 @@ playwright-report/
 # Supabase local state
 supabase/.temp/
 supabase/.branches/
+
+# Local video exports
+video/
