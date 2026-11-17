@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { assistantModelConfig } from "@/lib/ai/config";
+import { assistantModelConfig, assistantModelNote } from "@/lib/ai/config";
 import { keyProblem, setting } from "@/lib/env";
 import { getSupabaseConfig } from "@/lib/supabase/config";
 import { azureConfig } from "@/lib/voice/azure";
@@ -83,6 +83,8 @@ export async function GET() {
       },
       appUrl: Boolean(setting("NEXT_PUBLIC_APP_URL")),
       assistantAi: assistantModelConfig() !== null,
+      // Why free questions are off, or null when they are on.
+      assistantAiNote: assistantModelNote(),
       uzbekVoice: azureConfig() !== null,
       problems,
     },

@@ -7,10 +7,12 @@ test("the status page says what the server sees, without any values", async ({ r
   expect(body.supabase).toMatchObject({ url: true, anonKey: true, configured: true, serviceRoleKey: true, reachable: true, databaseReady: true, serviceRoleKeyAccepted: true });
   expect(body.problems).toEqual({});
   expect(body.assistantAi).toBe(true);
+  expect(body.assistantAiNote).toBeNull();
   const text = JSON.stringify(body);
   for (const secret of ["mock-anon-key", "mock-service-key", "mock-anthropic-key", "localhost:54399"]) expect(text).not.toContain(secret);
 
   const bare = await (await request.get("http://localhost:3101/api/health")).json();
   expect(bare.supabase).toMatchObject({ configured: false, reachable: null, databaseReady: null });
   expect(bare.assistantAi).toBe(false);
+  expect(bare.assistantAiNote).toMatch(/ANTHROPIC_API_KEY|ASSISTANT_PROVIDER/);
 });

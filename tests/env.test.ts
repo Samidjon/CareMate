@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { keyProblem, setting } from "@/lib/env";
 import { getSupabaseConfig } from "@/lib/supabase/config";
-import { assistantModelConfig } from "@/lib/ai/config";
+import { assistantModelConfig, assistantModelNote } from "@/lib/ai/config";
 
 describe("settings pasted into a hosting dashboard", () => {
   it("ignores stray spaces, line breaks and quotes", () => {
@@ -37,5 +37,19 @@ describe("pasted key problems", () => {
     expect(keyProblem("sb_secret_abcd••••••••")).toMatch(/masked/);
     expect(keyProblem(`NEXT_PUBLIC_SUPABASE_ANON_KEY=${good}`)).toMatch(/variable name/);
     expect(keyProblem(good.replace("a", "а"))).toMatch(/non-Latin/);
+  });
+});
+
+describe("why the assistant AI is off", () => {
+  it("names the cause without repeating a value", () => {
+    const key = "k".repeat(40);
+    expect(assistantModelNote({ ANTHROPIC_API_KEY: key })).toBeNull();
+    expect(assistantModelNote({})).toMatch(/not set/);
+    expect(assistantModelNote({ ANTHROPIC_KEY: key })).toMatch(/Similar names found: ANTHROPIC_KEY$/);
+    expect(assistantModelNote({ ANTHROPIC_API_KEY: "short" })).toMatch(/too short/);
+    expect(assistantModelNote({ ANTHROPIC_API_KEY: `ANTHROPIC_API_KEY=${key}` })).toMatch(/variable name/);
+    expect(assistantModelNote({ ANTHROPIC_API_KEY: key, ASSISTANT_PROVIDER: "none" })).toMatch(/switched off/);
+    expect(assistantModelNote({ ANTHROPIC_API_KEY: key, ASSISTANT_PROVIDER: "openai" })).toMatch(/must be anthropic/);
+    for (const env of [{ ANTHROPIC_KEY: key }, { ANTHROPIC_API_KEY: `X=${key}` }]) expect(assistantModelNote(env)).not.toContain(key);
   });
 });
